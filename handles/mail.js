@@ -7,8 +7,8 @@ const sndmail = reciever => {
     host: "smtp.gmail.com",
     secure: false,
     auth: {
-      user: "sixtusiwuchukwu21@gmail.com",
-      pass: "08100371154"
+      user: process.env.username,
+      pass: process.env.password
     }
   });
   const mailOption = {
