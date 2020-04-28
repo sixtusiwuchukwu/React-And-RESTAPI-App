@@ -11,7 +11,11 @@ router.post("/add_todo", isAuth, (req, res) => {
     description: description,
     creator: creator
   })
-    .then(res => console.log("saved"))
+    .then(response => {
+      res.status(200).json({
+        message: `your todo have been saved with a title of '${response.title}'`
+      });
+    })
     .catch(err => console.log(err));
 });
 

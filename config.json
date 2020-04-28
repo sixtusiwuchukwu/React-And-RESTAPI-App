@@ -1,0 +1,8 @@
+{
+  "env": {
+    "jwt_secret_key": "cooling",
+    "mail_username": "sixtusiwuchukwu21@gmail.com",
+    "mail_password ": "08100371154",
+    "database": "mongodb://localhost:27017/learn"
+  }
+}

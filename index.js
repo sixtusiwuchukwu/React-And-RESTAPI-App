@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -8,15 +9,26 @@ const cors = require("cors");
 
 const app = express();
 
-const corsOption = {
-  origin: "http://localhost:3000"
-};
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-with, Content-Type,Accept, Authorization"
+  );
 
-app.use(cors(corsOption));
+  if (req.method === "OPTIONS") {
+    res.header(
+      "Access-Control-Allow-Methods",
+      "PUT,POST,GET,DELETE,PATCH,UPDATE"
+    );
+    return res.status(200).json({});
+  }
+  next();
+});
 
 app.use("/todo", todoApi);
 
@@ -25,7 +37,11 @@ app.use("/todo/login", todo_login_Api);
 app.use("/todo/signup", todo_signup_Api);
 
 mongoose
-  .connect("mongodb://localhost:27017/learn", { useUnifiedTopology: true })
+  // .connect(
+  //   "mongodb+srv://sixtus4545:@sixtus4545@sixtusdb-cqswn.mongodb.net/test?retryWrites=true&w=majority",
+  //   { useNewUrlParser: true }
+  // )
+  .connect(process.env.database, { useNewUrlParser: true })
   .then(() => {
     setTimeout(() => {
       console.log("Database connected");
@@ -38,6 +54,8 @@ mongoose
     }, 4000);
     console.log("...connecting to database");
   });
+
+// mongoose.Promise = global.Promise;
 
 const port = process.env.port || 2080;
 

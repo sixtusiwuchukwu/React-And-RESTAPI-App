@@ -5,7 +5,7 @@ const router = express.Router();
 const sndmail = require("../../handles/mail");
 const User = require("../../models/user");
 
-router.post("/todo/user", (req, res) => {
+router.post("/", (req, res) => {
   const { fullname, email, username, password } = req.body;
   User.findOne({ username: req.body.username }).then(exiting_user => {
     if (exiting_user) {

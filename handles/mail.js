@@ -7,8 +7,8 @@ const sndmail = reciever => {
     host: "smtp.gmail.com",
     secure: false,
     auth: {
-      user: process.env.username,
-      pass: process.env.password
+      user: process.env.mail_username,
+      pass: process.env.mail_password
     }
   });
   const mailOption = {
@@ -19,10 +19,12 @@ const sndmail = reciever => {
   };
   transporter.sendMail(mailOption, (err, info) => {
     if (err) {
-      console.log("unable to send mail");
+      console.log("unable to send mail", err);
     } else {
-      console.log("signup is sucessful");
+      console.log("signup is sucessful", info);
     }
   });
 };
 module.exports = sndmail;
+
+// sndmail("sixtusiwuchukwu21@gmail.com");
