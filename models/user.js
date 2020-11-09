@@ -7,31 +7,32 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 3,
     trim: true,
-    required: true
+    required: true,
   },
   email: {
     type: String,
     minlength: 3,
     trim: true,
-    required: true
+    required: true,
   },
   username: {
     type: String,
     minlength: 5,
     trim: true,
-    required: true
+    required: true,
   },
   avarter: {
-    type: String
+    type: String,
   },
   password: {
     type: String,
     required: true,
-    minlength: 6
-  }
+    minlength: 6,
+    trim: true,
+  },
 });
 
-userSchema.methods.toJSON = function() {
+userSchema.methods.toJSON = function () {
   const user = this;
   const userObject = user.toObject();
 
@@ -40,11 +41,11 @@ userSchema.methods.toJSON = function() {
     "username",
     "email",
     "fullname",
-    "avarter"
+    "avarter",
   ]);
 };
 
-userSchema.pre("save", function(next) {
+userSchema.pre("save", function (next) {
   const user = this;
 
   if (user.isModified("password")) {
@@ -62,4 +63,3 @@ userSchema.pre("save", function(next) {
 const User = mongoose.model("user", userSchema);
 
 module.exports = User;
-// isAlphanumeric

@@ -1,82 +1,117 @@
 const express = require("express");
 const isAuth = require("../../middlewares/Auth");
-const Todo = require("../../models/schema");
+const Todo = require("../../models/todo");
+const User = require("../../models/user");
+const mongoose = require("mongoose");
+const cloudinary = require("cloudinary").v2;
 
 const router = express.Router();
 
-router.post("/add_todo", isAuth, (req, res) => {
+router.post("/addtodo", isAuth, (req, res) => {
   const { title, description, creator } = req.body;
   Todo.create({
-    title: title,
-    description: description,
-    creator: creator
+    title,
+    description,
+    creator,
   })
-    .then(res => console.log("saved"))
-    .catch(err => console.log(err));
+    .then((response) => {
+      res.status(200).json({
+        message: `your todo have been saved with a title of '${response.title}'`,
+      });
+    })
+    .catch((err) => console.log(err));
 });
 
-router.get("/:id", isAuth, (req, res) => {
-  if (!ObjectID.isValid(req.params.id)) {
-    return res.status(404).send();
-  }
-  Todo.find({ creator: req.params.id }, (err, singleTodo) => {
+router.get("/", isAuth, (req, res) => {
+  Todo.find({ creator: req.userData._id }, (err, singleTodo) => {
     if (err) {
-      console.log(err);
+      return res.send(err.message);
     } else {
       return res.send(singleTodo);
     }
   });
 });
 
-router.delete("/delete-todo", isAuth, (req, res) => {
+router.delete("/deletetodo", isAuth, (req, res) => {
   Todo.deleteMany({}, (err, removed) => {
     if (err) {
       return err;
     } else {
-      console.log("deleted");
+      return res.send("sucessfully deleted All todos");
     }
   });
 });
 
-router.delete("/delete-post/:id", (req, res) => {
-  console.log(req.params);
+router.delete("/deletepost/:id", isAuth, (req, res) => {
   Todo.findByIdAndRemove(req.params.id, (err, deletedTodo) => {
     if (err) {
-      console.log(err);
+      return err;
     } else {
-      console.log(deletedTodo);
-      console.log("deleted...");
+      return res.send("deletedTodo");
     }
   });
 });
 
-router.put("/update-post/:id", (req, res) => {
+router.put("/updatepost/:id", isAuth, (req, res) => {
   Todo.findByIdAndUpdate(req.params.id, req.body, (err, updated) => {
     if (err) {
-      console.log(err);
+      return err;
     } else {
-      res.send(updated);
-      console.log(updated);
+      res.send("updated todo");
     }
   });
 });
-router.put("/update-post", (req, res) => {
+
+router.get("/currentuser", isAuth, async (req, res) => {
+  let { _id } = req.userData;
+
+  let you = await User.findById(_id);
+  res.send(you);
+});
+
+router.put("/profileimage", isAuth, (req, res) => {
+  let { _id } = req.userData;
+  let foundUser = User.findById(_id);
   const { averter } = req.body;
-  User.findByIdAndUpdate(
-    { _id: new ObjectID("5df256d2391c6c256abc5732") },
-    {
-      $set: {
-        averter: "hello"
-      },
-      returnOriginal: false
-    }
-  )
-    .then(result => {
-      console.log("saved", result);
-    })
-    .catch(err => {
-      console.log(err);
+  if (foundUser) {
+    cloudinary.config({
+      cloud_name: "defbw7rt6",
+      api_key: "812499342985472",
+      api_secret: "Am0APQjSXJu9LePZSki4HcX5jMo",
     });
+
+    cloudinary.uploader.upload(
+      averter,
+      {
+        width: 512,
+        height: 512,
+        crop: "scale",
+        allowed_formats: ["jpg", "png", "jpeg", "svg", "bmp"],
+        public_id: "",
+        folder: "profile_image",
+      },
+      function (error, result) {
+        if (error) {
+          return console.log(error);
+        }
+        User.findByIdAndUpdate(
+          { _id },
+          {
+            $set: {
+              avarter: result.secure_url,
+            },
+          }
+        )
+          .then(() => {
+            return res.send("image sucessfully uploaded");
+          })
+          .catch((err) => {
+            res.send(err);
+            console.log(err);
+          });
+      }
+    );
+  }
 });
 
 module.exports = router;
