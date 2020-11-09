@@ -13,6 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
 
+<<<<<<< HEAD
 // app.use((req, res, next) => {
 //   res.header("Access-Control-Allow-Origin", "*");
 //   res.header(
@@ -36,6 +37,24 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+=======
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-with, Content-Type,Accept, Authorization"
+  );
+
+  if (req.method === "OPTIONS") {
+    res.header(
+      "Access-Control-Allow-Methods",
+      "PUT,POST,GET,DELETE,PATCH,UPDATE"
+    );
+    return res.status(200).json({});
+  }
+  next();
+});
+>>>>>>> 3f86b8c0fd82976902c603c65c4c39c5777c4c75
 
 app.use("/todo", todoApi);
 
@@ -48,10 +67,14 @@ mongoose
   //   "mongodb+srv://sixtus4545:@sixtus4545@sixtusdb-cqswn.mongodb.net/test?retryWrites=true&w=majority",
   //   { useNewUrlParser: true }
   // )
+<<<<<<< HEAD
   .connect("mongodb://localhost:27017/database", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
+=======
+  .connect(process.env.database, { useNewUrlParser: true })
+>>>>>>> 3f86b8c0fd82976902c603c65c4c39c5777c4c75
   .then(() => {
     setTimeout(() => {
       console.log("Database connected");

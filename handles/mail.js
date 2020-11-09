@@ -8,10 +8,16 @@ const sndmail = (reciever) => {
     host: "smtp.gmail.com",
     secure: true,
     auth: {
+<<<<<<< HEAD
       type: "login",
       user: "sixtusiwuchukwu21@gmail.com",
       pass: "08100371154",
     },
+=======
+      user: process.env.mail_username,
+      pass: process.env.mail_password
+    }
+>>>>>>> 3f86b8c0fd82976902c603c65c4c39c5777c4c75
   });
   const mailOption = {
     from: "onyeozi@gmail.com",
@@ -30,3 +36,5 @@ const sndmail = (reciever) => {
   });
 };
 module.exports = sndmail;
+
+// sndmail("sixtusiwuchukwu21@gmail.com");
